@@ -13,15 +13,15 @@ extern int N;
 #define AI 'O'      // IA
 
 // Fonctions de création/suppression du plateau
-char createBoard();
-void freeBoard(char board);
+char** createBoard();
+void freeBoard(char** board);
 
 // Fonctions de gestion du plateau
-void initBoard(char board);
-void printBoard(char board);
-int isValidMove(char board, int col);
-int makeMove(char board, int col, char token);
-int boardFull(char board);
-int checkWin(char board, char token);
+void initBoard(char** board);
+void printBoard(char** board);
+int isValidMove(char** board, int col);
+int makeMove(char** board, int col, char token);
+int boardFull(char** board);
+int checkWin(char** board, char token);
 
 #endif // GAME_H
