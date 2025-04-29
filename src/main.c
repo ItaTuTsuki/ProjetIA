@@ -52,15 +52,14 @@ int main() {
             printBoard(board);
             printf("Le joueur %c a gagné !\n", current);
             running = 0;
-            break;
         }
 
         // Changer de joueur
-        current = (current == PLAYER) ? AI : PLAYER;
+        current=changePlayer(current);
     }
 
     // Si match nul
-    if (running) {
+    if (running==1) {
         printBoard(board);
         printf("Match nul !\n");
     }

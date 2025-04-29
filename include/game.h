@@ -23,5 +23,6 @@ int isValidMove(char** board, int col);
 int makeMove(char** board, int col, char token);
 int boardFull(char** board);
 int checkWin(char** board, char token);
+char changePlayer(char current) ;
 
 #endif // GAME_H

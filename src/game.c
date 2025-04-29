@@ -134,3 +134,11 @@ int checkWin(char **board, char token) {
     return 0;
 }
 
+// Change le joueur courant
+char changePlayer(char current) {
+    if (current == PLAYER) {
+        return AI;
+    } else {
+        return PLAYER;
+    }
+}
