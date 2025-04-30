@@ -24,5 +24,6 @@ int makeMove(char** board, int col, char token);
 int boardFull(char** board);
 int checkWin(char** board, char token);
 char changePlayer(char current) ;
+char** gameInitialization();
 
 #endif // GAME_H

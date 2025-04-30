@@ -142,3 +142,35 @@ char changePlayer(char current) {
         return PLAYER;
     }
 }
+
+
+
+char** gameInitialization() {
+    printf("Bienvenue dans Puissance N !\n");
+
+    // Demander les paramètres de la grille
+    printf("Entrez le nombre de lignes (minimum 4) : ");
+    scanf("%d", &ROWS);
+
+    printf("Entrez le nombre de colonnes (minimum 4) : ");
+    scanf("%d", &COLS);
+
+    printf("Entrez le nombre de jetons à aligner pour gagner (N >= 4) : ");
+    scanf("%d", &N);
+
+    // Vérifications de base
+    if (ROWS < 4  || COLS < 4 || N < 4) {
+        printf("Paramètres invalides. Minimum 4 pour lignes, colonnes et alignement.\n");
+        return NULL;
+    }
+    if (N > ROWS && N > COLS) {
+        printf("Impossible d'aligner %d jetons sur cette grille. (Grille trop petite)\n", N);
+        return NULL;
+    }
+
+    // Création du plateau
+    char **board = createBoard();
+    initBoard(board);
+
+    return board;
+}

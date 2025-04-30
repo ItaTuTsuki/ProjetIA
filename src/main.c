@@ -1,34 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "game.h"
+#include "graphical_interface.h"
 
-int main() {
-    printf("Bienvenue dans Puissance N !\n");
 
-    // Demander les paramètres de la grille
-    printf("Entrez le nombre de lignes (minimum 4) : ");
-    scanf("%d", &ROWS);
-
-    printf("Entrez le nombre de colonnes (minimum 4) : ");
-    scanf("%d", &COLS);
-
-    printf("Entrez le nombre de jetons à aligner pour gagner (N >= 4) : ");
-    scanf("%d", &N);
-
-    // Vérifications de base
-    if (ROWS < 4  || COLS < 4 || N < 4) {
-        printf("Paramètres invalides. Minimum 4 pour lignes, colonnes et alignement.\n");
+int game_in_terminal() {
+    
+    char **board = gameInitialization();
+    if(board == NULL) {
+        fprintf(stderr, "Erreur d'initialisation du plateau de jeu.\n");
         return 1;
     }
-    if (N > ROWS && N > COLS) {
-        printf("Impossible d'aligner %d jetons sur cette grille. (Grille trop petite)\n", N);
-        return 1;
-    }
-
-    // Création du plateau
-    char **board = createBoard();
-    initBoard(board);
-
     char current = PLAYER; // Joueur X commence
     int col;
     int running = 1;
@@ -66,6 +48,36 @@ int main() {
 
     // Libération de la mémoire
     freeBoard(board);
+
+    return 0;
+}
+
+
+
+int main() {
+    int choice;
+    printf("Choisissez le mode de jeu :\n");
+    printf("1. Terminal\n");
+    printf("2. Graphique\n");
+    printf("Votre choix : ");
+    scanf("%d", &choice);
+
+
+    // Si le choix est 1, on appelle le mode terminal
+    if (choice == 1) {
+        game_in_terminal();
+    }
+
+    // Si le choix est 2, on appelle le mode graphique
+    else if (choice == 2) {
+        game_in_gui();
+        
+    }
+
+    else {
+        printf("Choix invalide. Veuillez choisir 1 ou 2.\n");
+        return 1;
+    }
 
     return 0;
 }
