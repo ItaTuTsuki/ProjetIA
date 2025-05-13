@@ -74,7 +74,7 @@ static void start_new_game() {
     gtk_widget_queue_draw(area);
 }
 
-static gboolean animate_drop(gpointer data) {
+static gboolean animate_drop(gpointer /*data*/) {
     if (anim_current_row > 0)
         board[anim_current_row - 1][anim_col] = EMPTY;
 
@@ -149,7 +149,7 @@ static gboolean animate_drop(gpointer data) {
     }
 }
 
-static void draw_board(GtkWidget *widget, cairo_t *cr, gpointer data) {
+static void draw_board(GtkWidget *widget, cairo_t *cr, gpointer /*data*/) {
     GtkAllocation allocation;
     gtk_widget_get_allocation(widget, &allocation);
     cairo_set_source_rgb(cr, 0.2, 0.4, 0.9);
@@ -174,7 +174,7 @@ static void draw_board(GtkWidget *widget, cairo_t *cr, gpointer data) {
     }
 }
 
-static gboolean on_click(GtkWidget *widget, GdkEventButton *event, gpointer data) {
+static gboolean on_click(GtkWidget */*widget*/, GdkEventButton *event, gpointer data) {
     if (event->type == GDK_BUTTON_PRESS && !animating) {
         int col = event->x / CELL_SIZE;
         if (isValidMove(board, col)) {

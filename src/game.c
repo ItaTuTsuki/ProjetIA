@@ -148,7 +148,7 @@ int max(int a, int b) {
 }
 
 char** gameInitialization() {
-    printf("Bienvenue dans Puissance ALIGN_TO_WIN !\n");
+    printf("Bienvenue dans Puissance N !\n");
 
     // Demander les paramètres de la grille
     printf("Entrez le nombre de lignes (minimum 4) : ");
