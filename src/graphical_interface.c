@@ -1,7 +1,9 @@
 #include <gtk/gtk.h>
 #include <locale.h>
+#include <string.h>
 #include "game.h"
 #include "graphical_interface.h"
+
 
 static char **board;
 static char current_player = PLAYER;
@@ -20,6 +22,30 @@ static int score_ai = 0;
 static GtkWidget *score_label = NULL;
 static GtkWidget *params_label = NULL;
 static gboolean player_starts = TRUE;
+
+char* rouge(const char* texte) {
+    const char* prefix = "\033[1;31m";  // Rouge vif
+    const char* suffix = "\033[0m";     // Réinitialisation
+    size_t taille = strlen(prefix) + strlen(texte) + strlen(suffix) + 1;
+
+    char* resultat = malloc(taille);
+    if (resultat == NULL) return NULL;
+
+    snprintf(resultat, taille, "%s%s%s", prefix, texte, suffix);
+    return resultat;
+}
+
+char* jaune(const char* texte) {
+    const char* prefix = "\033[1;33m";  // Jaune vif
+    const char* suffix = "\033[0m";     // Réinitialisation
+    size_t taille = strlen(prefix) + strlen(texte) + strlen(suffix) + 1;
+
+    char* resultat = malloc(taille);
+    if (resultat == NULL) return NULL;
+
+    snprintf(resultat, taille, "%s%s%s", prefix, texte, suffix);
+    return resultat;
+}
 
 int getAvailableRow(char **board, int col) {
     for (int i = ROWS - 1; i >= 0; --i) {
@@ -82,6 +108,13 @@ static gboolean animate_drop(gpointer data) {
             if (response == GTK_RESPONSE_YES) {
                 start_new_game();
             } else {
+                char red[128];
+                char yellow[128];
+                snprintf(red, sizeof(red),
+                    "Rouge : %d", score_player);
+                snprintf(yellow, sizeof(yellow),
+                    "Jaune : %d", score_ai);
+                printf("\n\nScore final - %s, %s\n", rouge(red), jaune(yellow));
                 gtk_main_quit();
             }
         } else if (boardFull(board)) {
@@ -94,6 +127,13 @@ static gboolean animate_drop(gpointer data) {
             if (response == GTK_RESPONSE_YES) {
                 start_new_game();
             } else {
+                char red[128];
+                char yellow[128];
+                snprintf(red, sizeof(red),
+                    "Rouge : %d", score_player);
+                snprintf(yellow, sizeof(yellow),
+                    "Jaune : %d", score_ai);
+                printf("\n\nScore final - %s, %s\n", rouge(red), jaune(yellow));
                 gtk_main_quit();
             }
         } else {
