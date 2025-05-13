@@ -6,7 +6,7 @@
 // Variables globales (définies dans game.c)
 extern int ROWS;
 extern int COLS;
-extern int N;
+extern int ALIGN_TO_WIN;
 
 #define EMPTY ' '   // Case vide
 #define PLAYER 'X'  // Joueur humain
