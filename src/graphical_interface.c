@@ -8,6 +8,8 @@
 static char **board;
 static char current_player = PLAYER;
 static GtkWidget *area;
+static int hover_col = -1;  // -1 = aucune colonne survolée
+
 
 // Animation
 static int anim_col = -1;
@@ -35,7 +37,6 @@ static void draw_board(GtkWidget *widget, cairo_t *cr, gpointer data) {
     gtk_widget_get_allocation(widget, &allocation);
     cairo_set_source_rgb(cr, 0.2, 0.4, 0.9);
     cairo_paint(cr);
-
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
             double x = j * CELL_SIZE + CELL_SIZE / 2.0;
@@ -52,6 +53,19 @@ static void draw_board(GtkWidget *widget, cairo_t *cr, gpointer data) {
             cairo_arc(cr, x, y, CELL_SIZE / 2.5, 0, 2 * G_PI);
             cairo_fill(cr);
         }
+    }
+    // Dessine le jeton en survol (s'il y a une colonne survolée et pas en animation)
+    if (hover_col >= 0 && !animating) {
+        double x = hover_col * CELL_SIZE + CELL_SIZE / 2.0;
+        double y = CELL_SIZE / 2.0;
+
+        if (current_player == PLAYER)
+            cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);  // Rouge
+        else
+            cairo_set_source_rgb(cr, 1.0, 1.0, 0.0);  // Jaune
+
+        cairo_arc(cr, x, y, CELL_SIZE / 2.5, 0, 2 * G_PI);
+        cairo_fill(cr);
     }
 }
 
@@ -70,6 +84,15 @@ static gboolean on_click(GtkWidget *widget, GdkEventButton *event, gpointer data
     return TRUE;
 }
 
+
+static gboolean on_mouse_move(GtkWidget *widget, GdkEventMotion *event, gpointer user_data) {
+    int new_col = event->x / CELL_SIZE;
+    if (new_col != hover_col && new_col >= 0 && new_col < COLS) {
+        hover_col = new_col;
+        gtk_widget_queue_draw(widget);
+    }
+    return TRUE;
+}
 
 char* rouge(const char* texte) {
     const char* prefix = "\033[1;31m";
@@ -217,6 +240,8 @@ static gboolean animate_drop(gpointer /*data*/) {
         }
 
         update_info_labels();
+        hover_col = -1;
+
         return G_SOURCE_REMOVE;
     }
 }
@@ -271,6 +296,9 @@ int game_in_gui() {
     g_signal_connect(area, "draw", G_CALLBACK(draw_board), NULL);
     g_signal_connect(area, "button-press-event", G_CALLBACK(on_click), anim_label);
     gtk_widget_add_events(area, GDK_BUTTON_PRESS_MASK);
+
+    gtk_widget_add_events(area, GDK_POINTER_MOTION_MASK);
+    g_signal_connect(area, "motion-notify-event", G_CALLBACK(on_mouse_move), NULL);
 
     gtk_widget_show_all(window);
     gtk_main();
