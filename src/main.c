@@ -27,7 +27,7 @@ int game_in_terminal() {
 
         if (mode == 2 && current == AI) {
             printf("Tour de l'IA...\n");
-            col = getBestMove(board, 10); // profondeur 4 par défaut
+            col = getBestMove(board, 4); // profondeur 4 par défaut
             printf("L'IA joue en colonne %d\n", col);
         } else {
             printf("Joueur %c - Choisissez une colonne (0-%d) : ", current, COLS - 1);
