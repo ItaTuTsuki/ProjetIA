@@ -12,8 +12,8 @@ char getAIPlayer() {
 
 int eval_segment(int ai_count, int human_count) {
     if (ai_count > 0 && human_count > 0) return 0; // bloqué
-    if (ai_count > 0) return pow(ai_count-1,10);
-    if(human_count > 0) return -pow(human_count-1,10);
+    if (ai_count > 0) return pow(10,ai_count-1);
+    if(human_count > 0) return -pow(10,human_count-1);
     return 0;
 }
 
