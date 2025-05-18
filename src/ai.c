@@ -4,7 +4,7 @@
 #include "ai.h"
 #include <math.h>
 
-#define MAX_DEPTH 4
+int profondeur = 4; // profondeur de recherche
 
 char getAIPlayer() {
     return AI;

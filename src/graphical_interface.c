@@ -144,7 +144,7 @@ static void start_new_game() {
         gtk_label_set_markup(GTK_LABEL(anim_label), "L'IA réfléchit...");
         while (gtk_events_pending()) gtk_main_iteration();
 
-        int ai_col = getBestMove(board, 4);
+        int ai_col = getBestMove(board, profondeur);
         if (isValidMove(board, ai_col)) {
             anim_col = ai_col;
             anim_row = getAvailableRow(board, ai_col);
@@ -228,7 +228,7 @@ static gboolean animate_drop(gpointer /*data*/) {
                 gtk_label_set_markup(GTK_LABEL(anim_label), "L'IA réfléchit...");
                 while (gtk_events_pending()) gtk_main_iteration();
 
-                int ai_col = getBestMove(board, 4);
+                int ai_col = getBestMove(board, profondeur);
                 if (isValidMove(board, ai_col)) {
                     anim_col = ai_col;
                     anim_row = getAvailableRow(board, ai_col);
@@ -253,7 +253,16 @@ int game_in_gui() {
     printf("2. Humain vs IA\n");
     printf("Votre choix : ");
     scanf("%d", &mode_vs_ai);
+    if (mode_vs_ai==2){
+        printf("A quelle profondeur l'IA va tester les coups ? (2-6) : ");
+        scanf("%d", &profondeur);
+        if (profondeur < 2 || profondeur > 6) {
+            printf("Profondeur invalide. Utilisation de la profondeur par défaut (4).\n");
+            profondeur = 4;
+        }
+    }
     mode_vs_ai = (mode_vs_ai == 2); // corriger la valeur
+    
 
     gtk_init(NULL, NULL);
 

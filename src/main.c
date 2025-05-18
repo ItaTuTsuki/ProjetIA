@@ -17,6 +17,14 @@ int game_in_terminal() {
     printf("2. Humain vs IA\n");
     printf("Votre choix : ");
     scanf("%d", &mode);
+    if (mode==2){
+        printf("A quelle profondeur l'IA va tester les coups ? (2-6) : ");
+        scanf("%d", &profondeur);
+        if (profondeur < 2 || profondeur > 6) {
+            printf("Profondeur invalide. Utilisation de la profondeur par défaut (4).\n");
+            profondeur = 4;
+        }
+    }
 
     char current = PLAYER; // 'X'
     int col;
@@ -27,7 +35,7 @@ int game_in_terminal() {
 
         if (mode == 2 && current == AI) {
             printf("Tour de l'IA...\n");
-            col = getBestMove(board, 4); // profondeur 4 par défaut
+            col = getBestMove(board, profondeur); 
             printf("L'IA joue en colonne %d\n", col);
         } else {
             printf("Joueur %c - Choisissez une colonne (0-%d) : ", current, COLS - 1);
