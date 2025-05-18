@@ -28,11 +28,11 @@ static gboolean player_starts = TRUE;
 
 // Déclarations des callbacks GTK utilisés avant leur définition
 static gboolean animate_drop(gpointer data);
-static void draw_board(GtkWidget *widget, cairo_t *cr, gpointer data);
+static void draw_board(GtkWidget *widget, cairo_t *cr, __attribute__((unused))gpointer data);
 static gboolean on_click(GtkWidget *widget, GdkEventButton *event, gpointer data);
 
 
-static void draw_board(GtkWidget *widget, cairo_t *cr, gpointer data) {
+static void draw_board(GtkWidget *widget, cairo_t *cr, __attribute__((unused))gpointer data) {
     GtkAllocation allocation;
     gtk_widget_get_allocation(widget, &allocation);
     cairo_set_source_rgb(cr, 0.2, 0.4, 0.9);
@@ -69,7 +69,16 @@ static void draw_board(GtkWidget *widget, cairo_t *cr, gpointer data) {
     }
 }
 
-static gboolean on_click(GtkWidget *widget, GdkEventButton *event, gpointer data) {
+int getAvailableRow(char **board, int col) {
+    for (int i = ROWS - 1; i >= 0; --i) {
+        if (board[i][col] == EMPTY) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static gboolean on_click(__attribute__((unused))GtkWidget *widget , GdkEventButton *event, gpointer data) {
     if (event->type == GDK_BUTTON_PRESS && !animating) {
         int col = event->x / CELL_SIZE;
         if (isValidMove(board, col)) {
@@ -85,7 +94,7 @@ static gboolean on_click(GtkWidget *widget, GdkEventButton *event, gpointer data
 }
 
 
-static gboolean on_mouse_move(GtkWidget *widget, GdkEventMotion *event, gpointer user_data) {
+static gboolean on_mouse_move(GtkWidget *widget, GdkEventMotion *event, __attribute__((unused))gpointer user_data) {
     int new_col = event->x / CELL_SIZE;
     if (new_col != hover_col && new_col >= 0 && new_col < COLS) {
         hover_col = new_col;
@@ -114,14 +123,7 @@ char* jaune(const char* texte) {
     return resultat;
 }
 
-int getAvailableRow(char **board, int col) {
-    for (int i = ROWS - 1; i >= 0; --i) {
-        if (board[i][col] == EMPTY) {
-            return i;
-        }
-    }
-    return -1;
-}
+
 
 static void update_info_labels() {
     char buffer[128];
