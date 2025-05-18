@@ -3,6 +3,8 @@
 #include <string.h>
 #include "game.h"
 #include "graphical_interface.h"
+#include "ai.h"
+
 
 
 static char **board;
