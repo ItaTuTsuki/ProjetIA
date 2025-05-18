@@ -2,6 +2,7 @@
 #include <limits.h>
 #include "game.h"
 #include "ai.h"
+#include <math.h>
 
 #define MAX_DEPTH 4
 
@@ -11,12 +12,8 @@ char getAIPlayer() {
 
 int eval_segment(int ai_count, int human_count) {
     if (ai_count > 0 && human_count > 0) return 0; // bloqué
-    if (ai_count == 4) return 1000;
-    if (ai_count == 3) return 100;
-    if (ai_count == 2) return 10;
-    if (human_count == 4) return -1000;
-    if (human_count == 3) return -100;
-    if (human_count == 2) return -10;
+    if (ai_count > 0) return pow(ai_count-1,10);
+    if( human_count > 0) return -pow(human_count-1,10);
     return 0;
 }
 
@@ -25,15 +22,16 @@ static int evaluate_board(char **board, char ai_player, char human_player) {
 
     // Centre
     for (int row = 0; row < ROWS; row++) {
-        if (board[row][COLS / 2] == ai_player)
+        if (board[row][COLS / 2] == ai_player){
             score += 3;
+        }
     }
 
     // Alignements horizontaux
     for (int row = 0; row < ROWS; row++) {
-        for (int col = 0; col < COLS - 3; col++) {
+        for (int col = 0; col < COLS - ALIGN_TO_WIN -1; col++) {
             int ai_count = 0, human_count = 0;
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < ALIGN_TO_WIN; i++) {
                 if (board[row][col + i] == ai_player) ai_count++;
                 if (board[row][col + i] == human_player) human_count++;
             }
@@ -43,9 +41,9 @@ static int evaluate_board(char **board, char ai_player, char human_player) {
 
     // Alignements verticaux
     for (int col = 0; col < COLS; col++) {
-        for (int row = 0; row < ROWS - 3; row++) {
+        for (int row = 0; row < ROWS - ALIGN_TO_WIN -1; row++) {
             int ai_count = 0, human_count = 0;
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < ALIGN_TO_WIN; i++) {
                 if (board[row + i][col] == ai_player) ai_count++;
                 if (board[row + i][col] == human_player) human_count++;
             }
@@ -54,10 +52,10 @@ static int evaluate_board(char **board, char ai_player, char human_player) {
     }
 
     // Diagonales descendantes
-    for (int row = 0; row < ROWS - 3; row++) {
-        for (int col = 0; col < COLS - 3; col++) {
+    for (int row = 0; row < ROWS - ALIGN_TO_WIN -1; row++) {
+        for (int col = 0; col < COLS - ALIGN_TO_WIN -1; col++) {
             int ai_count = 0, human_count = 0;
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < ALIGN_TO_WIN; i++) {
                 if (board[row + i][col + i] == ai_player) ai_count++;
                 if (board[row + i][col + i] == human_player) human_count++;
             }
@@ -66,10 +64,10 @@ static int evaluate_board(char **board, char ai_player, char human_player) {
     }
 
     // Diagonales montantes
-    for (int row = 3; row < ROWS; row++) {
-        for (int col = 0; col < COLS - 3; col++) {
+    for (int row = ALIGN_TO_WIN -1; row < ROWS; row++) {
+        for (int col = 0; col < COLS - ALIGN_TO_WIN -1; col++) {
             int ai_count = 0, human_count = 0;
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < ALIGN_TO_WIN; i++) {
                 if (board[row - i][col + i] == ai_player) ai_count++;
                 if (board[row - i][col + i] == human_player) human_count++;
             }

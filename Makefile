@@ -6,7 +6,7 @@ EXEC = puissance_n
 SRC = src/main.c src/game.c src/graphical_interface.c src/ai.c
 
 all:
-	$(CC) $(CFLAGS) $(SRC) -o $(EXEC) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(SRC) -o $(EXEC) $(LDFLAGS) -lm
 
 clean:
 	rm -f $(EXEC)
