@@ -1,7 +1,7 @@
 # ProjetIA - Puissance N
 
 Ce projet a pour but d'implémenter une IA sur un jeu.
-Nous avons choisi le jeux du puissance 4 et ensuite l'avons généralisé en puissance N.
+Nous avons choisi le jeu du Puissance 4 et ensuite l'avons généralisé en Puissance N.
 
 ## Structure du projet
 <pre markdown>
@@ -29,7 +29,7 @@ puissance_n/
   
 ### Installer avec :
 
-Sur linux uniquement :
+Sur Linux uniquement :
 ```bash
 sudo apt update
 sudo apt install pkg-config
@@ -66,27 +66,27 @@ Un choix vous est proposé entre jouer contre un vrai joueur (sur le même appar
 ![alt text](img/image-6.png)
 
 ### Paramétrer l'IA
-Vous pouvez choisir à quelle profondeur va tester les coups entre 2 à 6 coups.  
-2 car sinon l'IA n'est pas assez performante et pas audela de 6 car avec des plateau trop grand le temps de réfléxion devient trop long pour être jouable.
+Vous pouvez choisir à quelle profondeur l'IA va tester les coups entre 2 et 6 coups.  
+2, car sinon l'IA n'est pas assez performante, et pas au-delà de 6, car avec des plateaux trop grands le temps de réflexion devient trop long pour être jouable.
 
 ![alt text](img/image-7.png)
 
 ### Choix des dimensions du plateau de jeu
-Vous pouvez choisir vos paramètre personalisé pour créer votre plateau personel.  
+Vous pouvez choisir vos paramètres personnalisés pour créer votre plateau personnel.  
 Avec dimension minimale de 4x4.  
-Les dimensions d'un puissance 4 classique sont :  
+Les dimensions d'un Puissance 4 classique sont :  
 lignes = 6 et colonnes = 7
 
 ![alt text](img/image-4.png)
 
-### Choix nombre de jetons a aligner
-Vous pouvez maintenant choisir le nombre de jetons a aligner pour gagner la partie.  
-Le minimum est 3 est le maximimum est la valeur la plus petite entre le nombre de colonnes et de lignes.
+### Choix du nombre de jetons à aligner
+Vous pouvez maintenant choisir le nombre de jetons à aligner pour gagner la partie.  
+Le minimum est 3 et le maximum est la valeur la plus petite entre le nombre de colonnes et de lignes.
 
 ![alt text](img/image-5.png)
 
 ### Phase de jeu dans Terminal
-Vous avez juste a entrer la colonne dans laquelle vous voulez mettre votre jeton.
+Vous avez juste à entrer la colonne dans laquelle vous voulez mettre votre jeton.
 
 ![alt text](img/image-9.png)
 ![alt text](img/image-10.png)
@@ -95,15 +95,15 @@ L'IA joue ensuite, et c'est à votre tour de jouer.
 
 ![alt text](img/image-11.png)
 
-Le jeu se déroule jusqu'a ce qu'un joueur gagne ou que le plateau soit remplit.
+Le jeu se déroule jusqu’à ce qu’un joueur gagne ou que le plateau soit rempli.
 
 ![alt text](img/image-12.png)
 
 ### Phase de jeu dans GUI
 
 L'interface graphique se compose de deux blocs :
-- Les informations du plateau et le score du nombre de parties gagné par chaque joueur
-- Plateau de jeu 
+- Les informations du plateau et le score du nombre de parties gagnées par chaque joueur
+- Le plateau de jeu 
 
 ![alt text](img/image-13.png)
 
@@ -112,29 +112,29 @@ Passer la souris sur une colonne fait afficher en haut de cette colonne un jeton
 ![alt text](img/image-14.png)
 
 
-Pour jouer un coup il suffit simplement de faire un clic gauche avec la souris sur la colonne désiré.
+Pour jouer un coup, il suffit de faire un clic gauche avec la souris sur la colonne désirée.
 
 ![alt text](img/image-15.png)
 
 De la même manière que dans le jeu dans le terminal, le jeu se termine :
--   soit quand l'un des joueur a aligner le nombre de jeton requis 
--   soit quand le plateau est plein et que personne ne peut plus jouer de jeton dans le plateau
+-   soit quand l’un des joueurs a aligné le nombre de jetons requis
+-   soit quand le plateau est plein et que plus aucun jeton ne peut y être joué
 
 ![alt text](img/image-16.png)
 
-Ici l'IA a pu aligner horizontalement 4 jetons alors elle a gagné et une message s'affiche alors nous disant qui a gagné et nous demande de rejouer si on le souhaite.
+Ici l'IA a pu aligner horizontalement 4 jetons alors elle a gagné, et un message s'affiche pour indiquer le vainqueur et proposer de rejouer.
 
 ![alt text](img/image-17.png)
 
-Le score se met a jour apreès chaque partie remportée par l'un des joueurs.
+Le score se met à jour après chaque partie remportée par l'un des joueurs.
 
 ![alt text](img/image-18.png)
 
-S'il y a match nul alors la boite de dialogue le signal et nous demande s'il on souhaite rejouer, le score ne se met pas a jour dans ce cas la.
+S'il y a match nul alors La boîte de dialogue le signale et demande si l’on souhaite rejouer, le score ne se met pas à jour dans ce cas-là.
 
 ![alt text](img/image-19.png)
 
-Après avoir terminer de jouer un récapitulatif des scores est affiché dans le terminal.
+Après avoir terminé de jouer, un récapitulatif des scores est affiché dans le terminal.
 
 ![alt text](img/image-20.png)
 
@@ -145,7 +145,7 @@ Après avoir terminer de jouer un récapitulatif des scores est affiché dans le
 
 
 
-## Nettoyer les fichiers objets et executables générés 
+## Nettoyer les fichiers objets et exécutables générés 
   
 ```bash
 make clean
