@@ -1,108 +1,138 @@
-#include <gtk/gtk.h>
-#include <locale.h>
+#include <gtk/gtk.h>    //Interfaces graphiques
 #include <string.h>
-#include "game.h"
+#include "game.h"       //Logique du jeu
 #include "graphical_interface.h"
-#include "ai.h"
+#include "ai.h"         //IA
 
-static char **board;
-static char current_player = PLAYER;
-static GtkWidget *area;
-static int hover_col = -1;  // -1 = aucune colonne survolée
-
-
-// Animation
-static int anim_col = -1;
-static int anim_row = -1;
-static int anim_current_row = -1;
-static gboolean animating = FALSE;
-static GtkWidget *anim_label = NULL;
-
-// Scores et tour
-static int score_player = 0;
-static int score_ai = 0;
-static int mode_vs_ai = 1;
-static GtkWidget *score_label = NULL;
-static GtkWidget *params_label = NULL;
-static gboolean player_starts = TRUE;
-
-// Déclarations des callbacks GTK utilisés avant leur définition
-static gboolean animate_drop(gpointer data);
-static void draw_board(GtkWidget *widget, cairo_t *cr, __attribute__((unused))gpointer data);
-static gboolean on_click(GtkWidget *widget, GdkEventButton *event, gpointer data);
+//Variables globales du jeu
+char **board;
+char current_player = PLAYER;
+GtkWidget *area;
+int hover_col = -1;
 
 
-static void draw_board(GtkWidget *widget, cairo_t *cr, __attribute__((unused))gpointer data) {
+//Variables globnales pour gérer l'animation de chute des jetons
+int anim_row = -1;
+int anim_col = -1;
+int anim_current_row = -1;
+gboolean animating = FALSE;
+GtkWidget *anim_label = NULL;
+
+//Variables globales pour le score et les paramètres
+int score_player = 0;
+int score_ai = 0;
+int mode_vs_ai = 1;
+GtkWidget *score_label = NULL;
+GtkWidget *params_label = NULL;
+gboolean player_starts = TRUE;
+
+
+//Fonction pour dessiner le plateau et gère le survolement de la colonne
+//Est appelée à chaque fois que le plateau doit être redessiné
+void draw_board(GtkWidget *widget, cairo_t *cr) {
+    //Récupère la taille et la position du widget pour connaître la surface à dessiner.
     GtkAllocation allocation;
     gtk_widget_get_allocation(widget, &allocation);
+
+    //Définit la couleur de fond en bleu et dessine le rectangle
     cairo_set_source_rgb(cr, 0.2, 0.4, 0.9);
     cairo_paint(cr);
+
+    //Dessine la grille avec les jetons de couleur rouge et jaune et les cases vides en blanc
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
-            double x = j * CELL_SIZE + CELL_SIZE / 2.0;
-            double y = i * CELL_SIZE + CELL_SIZE / 2.0;
+            //Calcul la position du centre du jeton à placer
+            double x = (j * CELL_SIZE) + (CELL_SIZE / 2.0);
+            double y = (i * CELL_SIZE) + (CELL_SIZE / 2.0);
 
+            //Définit la couleur du jeton selon le joueur
             if (board[i][j] == PLAYER) {
+                // Rouge pour le joueur humain (ou joueur 1)
                 cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);
             } else if (board[i][j] == AI) {
+                // Jaune pour l'IA (ou joueur 2)
                 cairo_set_source_rgb(cr, 1.0, 1.0, 0.0);
             } else {
+                // Blanc pour les cases vides
                 cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
             }
 
+            //Dessine le jeton dans la case avec la couleur appropriée
             cairo_arc(cr, x, y, CELL_SIZE / 2.5, 0, 2 * G_PI);
             cairo_fill(cr);
         }
     }
-    // Dessine le jeton en survol (s'il y a une colonne survolée et pas en animation)
-    if (hover_col >= 0 && !animating) {
-        double x = hover_col * CELL_SIZE + CELL_SIZE / 2.0;
+    //Dessine le jeton en survol (s'il y a une colonne survolée et pas en animation)
+    if (hover_col >= 0 /*regarde si une colone est survolée de base hover_col=-1*/ && !animating) {
+        //Calcul la position du centre du jeton à placer en haut de la colonne survolée
+        double x = (hover_col * CELL_SIZE) + (CELL_SIZE / 2.0);
         double y = CELL_SIZE / 2.0;
 
+        //Définit la couleur du jeton selon le joueur
         if (current_player == PLAYER)
             cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);  // Rouge
         else
             cairo_set_source_rgb(cr, 1.0, 1.0, 0.0);  // Jaune
 
+        //Dessine le jeton en haut de la colonne survolée
         cairo_arc(cr, x, y, CELL_SIZE / 2.5, 0, 2 * G_PI);
         cairo_fill(cr);
     }
 }
 
+//Récupère la ligne disponible pour placer un jeton dans la colonne donnée
 int getAvailableRow(char **board, int col) {
+    //Regarde la colonne de bas en haut
     for (int i = ROWS - 1; i >= 0; --i) {
         if (board[i][col] == EMPTY) {
+            // Si la case est vide, retourne la ligne
             return i;
         }
     }
+    //Si la colonne est pleine, retourne -1
     return -1;
 }
 
-static gboolean on_click(__attribute__((unused))GtkWidget *widget , GdkEventButton *event, gpointer data) {
+//Fonction appelée lors du clic sur le plateau de la souris
+gboolean on_click(__attribute__((unused))GtkWidget *widget , GdkEventButton *event /*obtenir la colonne cliquée*/) {
+    //verifie si c'est bien un clic et qu'il n'y a pas d'animation en cours
     if (event->type == GDK_BUTTON_PRESS && !animating) {
+        //Récupère la colonne cliquée
         int col = event->x / CELL_SIZE;
+        
+        //Vérifie que le coup est valide
         if (isValidMove(board, col)) {
+            //Stocke la colonne et la ligne de l'animation
             anim_col = col;
-            anim_row = getAvailableRow(board, col);
-            anim_current_row = 0;
-            animating = TRUE;
-            anim_label = GTK_WIDGET(data);
+            anim_row = getAvailableRow(board, col); // Récupère la ligne disponible
+
+            anim_current_row = 0; //Remet à zéro la ligne courante de l'animation
+            animating = TRUE; //Active le mode animation
+            //Lance l'animation de chute toutes les 50ms
             g_timeout_add(50, animate_drop, NULL);
         }
     }
+    //Indique que l'évenement a été traité
     return TRUE;
 }
 
-
-static gboolean on_mouse_move(GtkWidget *widget, GdkEventMotion *event, __attribute__((unused))gpointer user_data) {
+//Fonction appelée lors du mouvement de la souris sur le plateau
+//Met à jour la colonne survolée et redessine le plateau si la souris a changé de colonne
+gboolean on_mouse_move(GtkWidget *widget, GdkEventMotion *event) {
+    //Calcul la nouvelle colonne survolée
     int new_col = event->x / CELL_SIZE;
+
+    //Si la colonne survolée est différente de l'ancienne et qu'elle est valide
     if (new_col != hover_col && new_col >= 0 && new_col < COLS) {
+        //Met à jour la colonne survolée
         hover_col = new_col;
+        //Demande un redessin du plateau
         gtk_widget_queue_draw(widget);
     }
     return TRUE;
 }
 
+//Fonctions pour colorer le texte en rouge dans la console
 char* rouge(const char* texte) {
     const char* prefix = "\033[1;31m";
     const char* suffix = "\033[0m";
@@ -113,6 +143,7 @@ char* rouge(const char* texte) {
     return resultat;
 }
 
+//Fonctions pour colorer le texte en jaune dans la console
 char* jaune(const char* texte) {
     const char* prefix = "\033[1;33m";
     const char* suffix = "\033[0m";
@@ -123,31 +154,52 @@ char* jaune(const char* texte) {
     return resultat;
 }
 
-
-
-static void update_info_labels() {
-    char buffer[128];
-    snprintf(buffer, sizeof(buffer), "Score - <span foreground='red'><b>Rouge: %d</b></span>, <span foreground='gold'><b>Jaune: %d</b></span>",score_player, score_ai);
-    gtk_label_set_markup(GTK_LABEL(score_label), buffer);
+//Fonction pour mettre à jour l'affichage du score
+void update_info_labels() {
+    char score_string[128];
+    //Formate la chaîne de score en y insérant les scores actuels des joueurs
+    //La balise <span foreground='red'> permet de colorer le texte en rouge dans l'interface graphique
+    //La balise <b> permet de mettre le texte en gras pour faire ressortir le score
+    snprintf(score_string, sizeof(score_string), "Score - <span foreground='red'><b>Rouge: %d</b></span>, <span foreground='gold'><b>Jaune: %d</b></span>",score_player, score_ai);
+    //applique le formatage de la chaîne de score à l'étiquette de score 
+    //utlisation de la fonction markup et non text pour les couleurs et styles 
+    gtk_label_set_markup(GTK_LABEL(score_label), score_string);
 }
 
-static void start_new_game() {
+
+//Fonction pour démarrer une nouvelle partie dans l'interface graphique
+void start_new_game() {
+    //initialise le plateau de jeu
     initBoard(board);
+    //Alterne l'ordre des joueurs, le joueur qui a commencé la partie précédente ne commence pas la nouvelle
     player_starts = !player_starts;
     current_player = player_starts ? PLAYER : AI;
+
+    //Prépare le texte d'inidication du joueur commençant la partie
     const char *text = (current_player == PLAYER)
         ? "Au tour du joueur <span foreground='red'><b>Rouge</b></span>"
         : "Au tour du joueur <span foreground='gold'><b>Jaune</b></span>";
+
+    //Affiche le texte d'indication du joueur commençant la partie
     gtk_label_set_markup(GTK_LABEL(anim_label), text);
+
+    //Met à jour l'affichage du score
     update_info_labels();
+
+    //Dessine ou Redessine le plateau 
     gtk_widget_queue_draw(area);
 
+    //Si on est en mode IA et que c'est le tour de l'IA de commencé, on lance l'IA
     if (mode_vs_ai && current_player == AI) {
+        //Prépare le texte d'indication de l'IA réfléchissant
         gtk_label_set_markup(GTK_LABEL(anim_label), "L'IA réfléchit...");
         while (gtk_events_pending()) gtk_main_iteration();
 
+        //Lance l'IA pour choisir le meilleur coup avec la profondeur choisie
+        //Peut prendre un certain temps selon la profondeur de recherche et la taille du plateau
         int ai_col = getBestMove(board, profondeur);
         if (isValidMove(board, ai_col)) {
+            //Prépare l'animation de chute du jeton comme précédemment
             anim_col = ai_col;
             anim_row = getAvailableRow(board, ai_col);
             anim_current_row = 0;
@@ -157,7 +209,12 @@ static void start_new_game() {
     }
 }
 
-static gboolean animate_drop(gpointer /*data*/) {
+//Fonction qui anime la chute du jeton dans le plateau et gère les événements:
+// - Vérifie si le joueur a gagné/perdu
+// - Vérifie si le plateau est plein (match nul)
+// - Change de joueur
+
+gboolean animate_drop() {
     if (anim_current_row > 0)
         board[anim_current_row - 1][anim_col] = EMPTY;
 
@@ -249,7 +306,6 @@ static gboolean animate_drop(gpointer /*data*/) {
 }
 
 int game_in_gui() {
-    setlocale(LC_ALL, "fr_FR.UTF-8");
     printf("Mode Graphique - Choisissez le mode :\n");
     printf("1. Humain vs Humain\n");
     printf("2. Humain vs IA\n");
