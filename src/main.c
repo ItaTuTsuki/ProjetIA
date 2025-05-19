@@ -6,6 +6,28 @@
 
 // Fonction principale pour jouer dans le terminal
 int game_in_terminal() {
+    int mode;
+    //Affiche le menu pour choisir le mode de jeu : joueur contre joueur, ou joueur contre IA
+    printf("\nMode Terminal - Choisissez le mode :\n");
+    printf("1. Humain vs Humain\n");
+    printf("2. Humain vs IA\n");
+    printf("Votre choix : ");
+    scanf("%d", &mode);
+
+    //Si le mode choisi est IA, demande la profondeur de recherche
+    if (mode==2){
+        printf("A quelle profondeur l'IA va tester les coups ? (2-6) : ");
+        scanf("%d", &profondeur);
+        //Vérifie que la profondeur est valide (entre 2 et 6)
+        //on a établi une profondeur de 2 à 6 pour éviter que l'IA ne prenne trop de temps 
+        //(surtout sur les grandes grilles) ou ne soit pas assez efficace
+        if (profondeur < 2 || profondeur > 6) {
+            printf("Profondeur invalide. Utilisation de la profondeur par défaut (4).\n");
+            profondeur = 4;
+        }
+    }
+
+
     char **board = gameInitialization(); // Création du plateau de jeu
 
     if(board == NULL) {
@@ -13,14 +35,7 @@ int game_in_terminal() {
         return 1;
     }
 
-    int mode;
-    // Choix entre deux modes : joueur contre joueur ou contre IA
-    printf("Choisissez le mode :\n");
-    printf("1. Humain vs Humain\n");
-    printf("2. Humain vs IA\n");
-    printf("Votre choix : ");
-    scanf("%d", &mode);
-
+    
     char current = PLAYER; // Le joueur 'X' commence
     int col;
     int running = 1;
@@ -32,10 +47,10 @@ int game_in_terminal() {
         if (mode == 2 && current == AI) {
             // Tour de l'IA
             printf("Tour de l'IA...\n");
-            col = getBestMove(board, 4); // Profondeur de recherche = 4
+            col = getBestMove(board, profondeur); // Profondeur de recherche = 4
             printf("L'IA joue en colonne %d\n", col);
         } else {
-            // Tour d’un joueur humain
+            // Tour d'un joueur humain
             printf("Joueur %c - Choisissez une colonne (0-%d) : ", current, COLS - 1);
             scanf("%d", &col);
 
@@ -59,7 +74,7 @@ int game_in_terminal() {
         current = changePlayer(current);
     }
 
-    // Si la boucle s'arrête sans gagnant, c’est un match nul
+    // Si la boucle s'arrête sans gagnant, c'est un match nul
     if (running) {
         printBoard(board);
         printf("Match nul !\n");

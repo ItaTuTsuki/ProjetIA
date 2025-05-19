@@ -14,15 +14,12 @@ char getAIPlayer() {
 
 
 //Fonction d'évaluation qui prend un segment de la grille et compte combien de jetons appartiennent à l'IA et au joueur.
-
 int eval_segment(int ai_count, int human_count) {
     if (ai_count > 0 && human_count > 0) return 0;                                  // Si le segment contient des jetons des 2 joueurs, le score vaut 0
     if (ai_count > 0) return pow(ai_count-1,10);                                    // Si seulement l'IA a des jetons, on donne un score positif
     if(human_count > 0) return -pow(human_count-1,10);                              // Si seulement l'humain a des jetons, on donne un score négatif (car dangereux pour l'ia)
     return 0;
 }
-
-
 
 // Fonction d'évaluation du plateau, appelée à la fin d'un parcours minimax. Cette fonction parcours
 // toute la grille pour ajouter un bonus si des jetons IA sont placés au centre (car c'est stratégiquement meilleur),
@@ -114,8 +111,8 @@ void undoMove(char **board, int col) {
 int minimax(char **board, int profondeur, int maximizingPlayer, char ai_player, char human_player) {
     if (checkWin(board, ai_player)) return pow(10,ALIGN_TO_WIN);                  // Si l'IA gagne, on retourne un score très élevé
     if (checkWin(board, human_player)) return -pow(10,ALIGN_TO_WIN);              // Si l'humain gagne, on retourne un score très faible
-    if (profondeur == 0 || boardFull(board)) {                                         // Si la profondeur est atteinte ou si le plateau est plein, on évalue le plateau avec evaluate_board
-        return evaluate_board(board, ai_player, human_player); 
+    if (profondeur == 0 || boardFull(board)) {                                    // Si la profondeur est atteinte ou si le plateau est plein, 
+        return evaluate_board(board, ai_player, human_player);                    // on évalue le plateau avec evaluate_board
     }
 
     if (maximizingPlayer) {                                                       // Si c'est le tour de l'IA

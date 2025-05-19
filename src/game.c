@@ -162,11 +162,11 @@ char** gameInitialization() {
     scanf("%d", &COLS);
 
     // Demande le nombre de jetons à aligner pour gagner, en respectant une borne maximale
-    printf("Entrez le nombre de jetons à aligner pour gagner (4 ≤ ALIGN_TO_WIN ≤ %d) : ", max(ROWS, COLS));
+    printf("Entrez le nombre de jetons à aligner pour gagner (3 ≤ ALIGN_TO_WIN ≤ %d) : ", max(ROWS, COLS));
     scanf("%d", &ALIGN_TO_WIN);
 
     // Vérifie la validité des valeurs
-    if (ROWS < 4  || COLS < 4 || ALIGN_TO_WIN < 4) {
+    if (ROWS < 4  || COLS < 4 || ALIGN_TO_WIN < 3) {
         printf("Paramètres invalides. Minimum 4 pour lignes, colonnes et alignement.\n");
         return NULL;
     }
